@@ -86,8 +86,42 @@ This works because `run` starts a single container interactively, bypassing the 
 ## Conclusion
 
 To pass env vars at runtime with `docker compose up`, you must declare them in:
-1. `docker-compose.yml`
-2. An override file (`docker-compose.override.yml`)
-3. Stdin (`docker compose -f docker-compose.yml -f - up`)
+
+### 1. `docker-compose.yml`
+
+```yaml
+services:
+  hello:
+    build: .
+    environment:
+      HELLO: ${HELLO}
+```
+
+```bash
+HELLO=WORLD docker compose up
+```
+
+### 2. An override file (`docker-compose.override.yml`)
+
+```yaml
+# docker-compose.override.yml
+services:
+  hello:
+    environment:
+      HELLO: OVERRIDE_VALUE
+```
+
+```bash
+docker compose up  # automatically merges override file
+```
+
+### 3. Stdin
+
+```bash
+echo 'services:
+  hello:
+    environment:
+      HELLO: STDIN_VALUE' | docker compose -f docker-compose.yml -f - up
+```
 
 For ad-hoc runs, use `docker compose run -e VAR=value service_name` instead.
