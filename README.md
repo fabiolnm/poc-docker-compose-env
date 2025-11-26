@@ -71,9 +71,23 @@ HELLO=WORLD docker compose up
 | 2 | No `environment` | `HELLO=WORLD docker compose up` | `HELLO=NOT SET` |
 | 3 | `HELLO: ${HELLO}` | `HELLO=WORLD docker compose up` | `HELLO=WORLD` |
 
+## Alternative: `docker compose run -e`
+
+Unlike `docker compose up`, the `run` command supports the `-e` flag:
+
+```bash
+docker compose run -e HELLO=WORLD hello
+```
+
+**Result:** `HELLO=WORLD`
+
+This works because `run` starts a single container interactively, bypassing the declarative model.
+
 ## Conclusion
 
 To pass env vars at runtime with `docker compose up`, you must declare them in:
 1. `docker-compose.yml`
 2. An override file (`docker-compose.override.yml`)
 3. Stdin (`docker compose -f docker-compose.yml -f - up`)
+
+For ad-hoc runs, use `docker compose run -e VAR=value service_name` instead.
